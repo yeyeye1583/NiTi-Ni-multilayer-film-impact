@@ -1,0 +1,159 @@
+#初始化设置
+clear
+units          metal       # 使用金属单位制（eV, Å, ps）
+dimension      3           # 三维模拟
+boundary       p p p       # x/y/z 方向均为周期性边界条件
+atom_style     atomic      # 原子类型为基本属性（无电荷、分子ID等）
+atom_modify    map array   # 原子ID连续排列，提高内存访问效率
+neigh_modify    delay 0 
+#变量设置
+variable       stemperature equal 500       # 初始温度 500 K
+variable       alattice     equal 2.999     # 晶格常数（Å）
+variable       myseed       equal 12345     # 随机数种子（用于初始化速度）
+
+# 基于晶格常数计算模拟区域尺寸
+variable       xmax equal     146.920394770000                # x方向尺寸：晶格常数 × 重复次数 × 晶向长度系数73.460197390000
+variable       ymax equal     725.668096940000               # y方向尺寸99.738550450000
+variable       zmax equal     124.666088930000              # z方向尺寸62.333044460000  
+
+# 时间相关参数
+variable       time_step    equal 0.001     # 时间步长（ps）
+variable       time_eq      equal 40000     # 平衡阶段总步数
+variable       time_shock   equal 50000     # 冲击阶段总步数
+variable       vpiston      equal 2.1       # 活塞速度（km/s → 转换为 Å/ps 时为 0.6 Å/ps）
+
+# 统计参数
+variable       Nevery       equal 10        # 每10步采样一次数据
+variable       Nrepeat      equal 5         # 每个平均窗口采样5次
+variable       Nfreq        equal 100       # 每100步输出一次平均值
+variable       deltay       equal 3         # 沿y方向分箱的厚度（Å）
+variable       atomrate     equal 500       # 轨迹文件输出频率（步）
+
+# 阻尼参数（用户建议勿修改）
+variable       tdamp equal "v_time_step*100"   # 温度阻尼时间（0.1 ps）
+variable       pdamp equal "v_time_step*1000"  # 压力阻尼时间（1 ps）
+variable       Up equal "10*v_vpiston"         # 活塞速度转换（0.6 km/s → 6 Å/ps）
+
+timestep       ${time_step}  # 设置时间步长为变量值（0.001 ps）
+region         atom_box block 0 ${xmax} 0 ${ymax} 0 ${zmax}  # 定义模拟区域范围
+read_data      NiTi_Ni5cengNiTi.lmp       # 读取 Atomsk 生成的 LAMMPS 数据文件
+
+# 定义原子组
+group          atom_box region atom_box  # 将整个区域的原子定义为组 atom_box
+region         piston block INF INF INF 6 INF INF  units box # 定义y < 3 Å的区域为活塞层
+region         bulk block INF INF 6 INF INF INF   units box  # 定义y > 3 Å的区域为体区域
+group          piston region piston                # 活塞层原子组（y方向）
+group          bulk region bulk                   # 体区域原子组（y方向）
+
+pair_style     meam                     # 使用MEAM（修正嵌入原子法）势
+pair_coeff     * * library.meam Ni Ti NiTi.meam Ni Ti  
+
+###########################能量最小化##################################
+#thermo          1000
+#thermo_style    custom step pxx pyy pzz lx ly lz temp pe ke press etotal
+#dump 1 all atom 1000 min.xyz
+#min_style  cg
+#minimize 1.0e-12 1.0e-12 10000 10000
+
+#undump 1
+
+# 定义计算量（用于后续统计）
+compute        myCN bulk cna/atom 1      # 计算原子局域晶体序参数（CNA）
+compute        myKE bulk ke/atom         # 每个原子的动能
+compute        myPE bulk pe/atom         # 每个原子的势能
+compute        myCOM bulk com            # 体区域原子的质心坐标
+compute        peratom bulk stress/atom NULL  # 每个原子的应力
+compute        vy bulk property/atom vy  # 每个原子的y方向速度
+
+########################################################################
+#############---------Equilibrate ----------#############
+#############---------平衡阶段----------#############
+reset_timestep 0    # 重置时间步为0
+
+# 初始化原子速度
+velocity        all create ${stemperature} ${myseed} rot yes dist gaussian
+                  # 按高斯分布初始化速度，温度500 K，允许整体旋转
+
+# 应用NPT系综（温度500 K，压力0 bar）
+fix             equilibration bulk npt temp ${stemperature} ${stemperature} ${tdamp} iso 0 0 1 
+                  # 控温参数：目标温度500 K，阻尼时间0.1 ps
+                  # 控压参数：各向同性目标压力0 bar，阻尼时间1 ps
+
+
+# 定义输出变量
+variable        eq1 equal "step"        # 时间步
+variable        eq2 equal "pxx/10000"   # x方向压力（单位转换）
+variable        eq3 equal "pyy/10000"   # y方向压力
+variable        eq4 equal "pzz/10000"   # z方向压力
+variable        eq5 equal "lx"          # x方向盒子长度
+variable        eq6 equal "ly"          # y方向盒子长度
+variable        eq7 equal "lz"          # z方向盒子长度
+variable        eq8 equal "temp"        # 温度
+variable        eq9 equal "etotal"      # 总能
+# 输出热力学数据到文件
+fix             output1 bulk print 10 "${eq1} ${eq2} ${eq3} ${eq4} ${eq5} ${eq6} ${eq7} ${eq8} ${eq9}" file run.out screen no
+
+# 设置热力学输出
+thermo          100                     # 每100步输出一次热力学信息
+thermo_style    custom step pxx pyy pzz lx ly lz temp etotal  # 输出内容
+
+# 输出轨迹文件
+dump            1 all custom 1000 dump_*.xyz id type x y z  # 保存原子坐标
+
+# 运行平衡阶段
+run ${time_eq}                          # 运行40000步（40 ps）
+unfix           equilibration           # 移除NPT约束
+unfix           output1                 # 停止输出
+undump          1                       # 停止轨迹输出
+
+change_box      all boundary p s p     # 修改边界条件：y方向为非周期性（自由表面）
+reset_timestep  0                       # 重置时间步为0
+
+# 应用NVE系综（能量守恒）
+fix             1 all nve
+
+# 设置活塞层速度
+velocity        piston set 0 v_Up 0  sum no units box  # 活塞层y方向速度6 Å/ps
+fix             2 piston setforce 0.0 0.0 0.0         # 固定活塞层原子受力
+
+# 定义沿y方向的分箱统计
+compute         density1 bulk chunk/atom bin/1d y lower ${deltay}  # 分箱统计密度
+fix             density_profile bulk ave/chunk ${Nevery} ${Nrepeat} ${Nfreq} density1 density/mass file deny.profile
+
+variable        temp atom c_myKE/(1.5*8.61e-5)        # 计算每个原子的温度（单位K）
+compute         temp1 bulk chunk/atom bin/1d y lower ${deltay}
+fix             temp_profile bulk ave/chunk ${Nevery} ${Nrepeat} ${Nfreq} temp1 v_temp file temp.profile
+
+variable        meanpress atom -(c_peratom[1]+c_peratom[2]+c_peratom[3])/3  # 原子平均压力
+compute         pressure1 bulk chunk/atom bin/1d y lower ${deltay}
+fix             pressure_profile bulk ave/chunk ${Nevery} ${Nrepeat} ${Nfreq} pressure1 v_meanpress file pressure.profile
+
+variable        pressyy atom -c_peratom[2] 
+compute         pressureyy bulk chunk/atom bin/1d y lower ${deltay}
+fix             pressyy_profile bulk ave/chunk ${Nevery} ${Nrepeat} ${Nfreq} pressureyy v_pressyy file pressyy.profile
+
+compute         velY1 bulk chunk/atom bin/1d y lower ${deltay}  # y方向速度
+fix             velY_profile bulk ave/chunk ${Nevery} ${Nrepeat} ${Nfreq} velY1 c_vy file velocityYcomp.profile
+
+variable        eq1 equal "step"        # 时间步
+variable        eq2 equal "pxx/10000"   # x方向压力（单位转换）
+variable        eq3 equal "pyy/10000"   # y方向压力
+variable        eq4 equal "pzz/10000"   # z方向压力
+variable        eq5 equal "lx"          # x方向盒子长度
+variable        eq6 equal "ly"          # y方向盒子长度
+variable        eq7 equal "lz"          # z方向盒子长度
+variable        eq8 equal "temp"        # 温度
+variable        eq9 equal "etotal"      # 总能
+variable        eq10 equal "c_myCOM[2]"  # 质心y坐标
+# 输出冲击阶段热力学数据
+
+fix             shock bulk print 10 "${eq1} ${eq2} ${eq3} ${eq4} ${eq5} ${eq6} ${eq7} ${eq8} ${eq9} ${eq10}" file run.${stemperature}K.out screen no
+
+# 热力学输出设置
+thermo          100
+thermo_style    custom step pxx pyy pzz lx ly lz temp etotal c_myCOM[2]
+
+# 输出CFG格式轨迹文件（兼容AtomEye）
+dump             2 all custom 100 dumpschock_*.xyz id type x y z c_myPE c_myKE c_myCN c_peratom[1] c_peratom[2] c_peratom[3] c_peratom[4] c_peratom[5] c_peratom[6]
+# 运行冲击阶段
+run             ${time_shock}     # 运行30000步（30 ps）
