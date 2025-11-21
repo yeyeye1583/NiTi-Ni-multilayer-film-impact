@@ -3,7 +3,7 @@ Ni-NiTi Multilayer Thin Film Shock Simulation - LAMMPS MD. Investigates shock-in
 
 ## 概述
 
-核心模拟使用LAMMPS（一个广泛使用的开源分子动力学软件包）进行。主输入脚本配置了模型、原子间势函数、积分参数和分析例程。
+核心模拟使用LAMMPS进行。主输入脚本配置了模型、原子间势函数、积分参数和分析例程。
 
 ## 文件与目录
 
