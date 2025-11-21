@@ -1,7 +1,7 @@
 -------------------------------------------------------------------------------
 Introduction:
 -------------------------------------------------------------------------------
-Title: Molecular Dynamics Simulation Dataset of Shock-induced Microstructure Evolution in Ni-NiTi Multilayer Thin Films
+Title: Molecular Dynamics Simulation Dataset of Shock-induced Microstructure Evolution in NiTi-Ni Multilayer Thin Films
 Institutions: Chongqing University of Posts and Telecommunications
 
 License:
@@ -17,7 +17,7 @@ Dataset Description:
 -------------------------------------------------------------------------------
 This dataset provides molecular dynamics simulation input scripts, output data, and analysis results for shock wave propagation in Ni-NiTi multilayer thin films using the Large-scale Atomic/Molecular Massively Parallel Simulator (LAMMPS).
 
-Simulations are performed using LAMMPS with the Modified Embedded-Atom Method (MEAM) potential for Ni-Ti interactions. The dataset includes complete simulation workflows from energy minimization to shock loading phases.
+Simulations are performed using LAMMPS with the second-nearest-neighbor modified embedded atom method (2NN-MEAM) potential for NiTi-Ti interactions. The dataset includes complete simulation workflows from energy minimization to shock loading phases.
 
 The simulation parameters include:
 - Initial temperature: 500 K
@@ -52,7 +52,6 @@ This dataset is organized as follows:
    - alattice: Lattice constant
 
 5. Analysis capabilities included:
-   - Common Neighbor Analysis (CNA) for crystal structure identification
    - Per-atom stress and energy calculations
    - Spatial binning for property profiling along shock direction
    - Velocity and temperature distribution analysis
