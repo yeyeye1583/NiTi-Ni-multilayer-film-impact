@@ -1,51 +1,77 @@
-# NiTi-Ni-multilayer-film-impact
-Ni-NiTi Multilayer Thin Film Shock Simulation - LAMMPS MD. Investigates shock-induced behavior and phase transformations at atomic scale. Includes complete simulation scripts and analysis tools for impact dynamics research.
+-------------------------------------------------------------------------------
+Introduction:
+-------------------------------------------------------------------------------
+Title: Molecular Dynamics Simulation Dataset of Shock-induced Microstructure Evolution in Ni-NiTi Multilayer Thin Films
+Institutions: [您的单位名称]
+Authors:
+ - [作者1姓名]
+ - [作者2姓名]
+ - [作者3姓名]
+ - [作者4姓名]
+ 
+Technical POC: [联系人姓名] ([联系人邮箱])
+Data Access POC: [联系人姓名] ([联系人邮箱])
 
+Funding Statement:
+[在此处添加资助声明，例如：
+This work is supported by the National Natural Science Foundation of China under Grant No. XXXXXX.
+或
+This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.]
 
-## Overview
+License:
+This work is licensed under MIT License. To view a copy of this license, visit https://opensource.org/licenses/MIT
 
-The core simulation is performed using LAMMPS, a widely-used open-source molecular dynamics package. The main input script configures the model, interatomic potential, integration parameters, and analysis routines.
+Date:
+This dataset was uploaded on [上传日期，例如：January 15, 2025]
 
-## Files and Directories
+Citation:
+When using this dataset, please cite the following publication:
+[作者姓名], "[论文标题]", [期刊名称], [年份]
 
-- **`in.NiTitongjv`**: The primary LAMMPS input script. This file defines the entire simulation workflow, including:
-  - Model initialization and energy minimization.
-  - Thermal equilibration (NPT ensemble).
-  - Shock loading via a piston method (NVE ensemble).
-  - On-the-fly calculation of properties like stress, temperature, and velocity profiles.
+-------------------------------------------------------------------------------
+Dataset Description:
+-------------------------------------------------------------------------------
+This dataset provides molecular dynamics simulation input scripts, output data, and analysis results for shock wave propagation in Ni-NiTi multilayer thin films using the Large-scale Atomic/Molecular Massively Parallel Simulator (LAMMPS).
 
-- **`/Sample Simulation Data`**: This directory contains a subset of the computational results obtained by running the main script. It is intended for validation and preliminary analysis. Contents may include:
-  - `run.out`: Thermodynamic output.
-  - `temp.profile`, `pressure.profile`: Spatial profiles of temperature and pressure.
-  - `dumpschock_*.xyz`: Atomic trajectory files for visualization.
+Simulations are performed using LAMMPS with the Modified Embedded-Atom Method (MEAM) potential for Ni-Ti interactions. The dataset includes complete simulation workflows from energy minimization to shock loading phases.
 
-- **`/Model and Parameters`**: This directory holds the essential input files that define the simulated system.
-  - `NiTi_Ni5cengNiTi.lmp`: The initial atomic coordinates data file.
-  - `library.meam` & `NiTi.meam`: Files defining the Modified Embedded-Atom Method (MEAM) potential for Ni-Ti interactions.
+The simulation parameters include:
+- Initial temperature: 500 K
+- Piston velocity: 2.1 km/s (converted to 6 Å/ps)
+- Time step: 0.001 ps
+- Equilibration phase: 40 ps (40,000 steps)
+- Shock phase: 50 ps (50,000 steps)
 
-## Getting Started
+-------------------------------------------------------------------------------
+Organization:
+-------------------------------------------------------------------------------
+This dataset is organized as follows:
 
-### Prerequisites
-*   LAMMPS must be installed on your system. Pre-built binaries or source code can be found on the [LAMMPS website](https://www.lammps.org/).
+1. "in.NiTitongjv" - Main LAMMPS input script containing:
+   - Model initialization and energy minimization
+   - Thermal equilibration (NPT ensemble)
+   - Shock loading via piston method (NVE ensemble)
+   - Real-time calculation of stress, temperature, and velocity profiles
 
-### Running the Simulation
-1.  Clone this repository.
-2.  Navigate to the root directory in your terminal.
-3.  Execute the simulation with the command:
-    ```bash
-    lmp -in in.NiTitongjv
-    ```
+2. "Sample_Simulation_Data" directory contains:
+   - Thermodynamic output files (run.out, run.${stemperature}K.out)
+   - Spatial profile data (density, temperature, pressure, velocity)
+   - Atomic trajectory files (dump_*.xyz, dumpschock_*.xyz)
 
-### Customizing the Simulation
-You can easily modify the simulation parameters by editing the `in.NiTitongjv` file. Key variables are defined at the top of the script:
-- `stemperature`: Initial system temperature (K).
-- `vpiston`: Piston velocity (km/s), which controls the shock strength.
-- `time_eq` & `time_shock`: Duration of the equilibration and shock phases.
+3. "Model_and_Parameters" directory contains:
+   - Initial atomic structure file (NiTi_Ni5cengNiTi.lmp)
+   - MEAM potential files (library.meam, NiTi.meam)
 
-## License
-MIT License
+4. Key simulation parameters (modifiable in in.NiTitongjv):
+   - stemperature: Initial system temperature
+   - vpiston: Piston velocity controlling shock strength
+   - time_eq, time_shock: Duration of equilibration and shock phases
+   - alattice: Lattice constant
 
-## Contact
-For questions regarding the simulation setup, please contact [Your Email or ORCID].
+5. Analysis capabilities included:
+   - Common Neighbor Analysis (CNA) for crystal structure identification
+   - Per-atom stress and energy calculations
+   - Spatial binning for property profiling along shock direction
+   - Velocity and temperature distribution analysis
 
-
+Note: Large output files (>100MB) are recommended to be stored separately and accessed via provided file manifest.
