@@ -2,31 +2,15 @@
 Introduction:
 -------------------------------------------------------------------------------
 Title: Molecular Dynamics Simulation Dataset of Shock-induced Microstructure Evolution in Ni-NiTi Multilayer Thin Films
-Institutions: [您的单位名称]
-Authors:
- - [作者1姓名]
- - [作者2姓名]
- - [作者3姓名]
- - [作者4姓名]
- 
-Technical POC: [联系人姓名] ([联系人邮箱])
-Data Access POC: [联系人姓名] ([联系人邮箱])
-
-Funding Statement:
-[在此处添加资助声明，例如：
-This work is supported by the National Natural Science Foundation of China under Grant No. XXXXXX.
-或
-This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.]
+Institutions: Chongqing University of Posts and Telecommunications
 
 License:
 This work is licensed under MIT License. To view a copy of this license, visit https://opensource.org/licenses/MIT
 
 Date:
-This dataset was uploaded on [上传日期，例如：January 15, 2025]
+This dataset was uploaded on 2025.11.21
 
-Citation:
-When using this dataset, please cite the following publication:
-[作者姓名], "[论文标题]", [期刊名称], [年份]
+
 
 -------------------------------------------------------------------------------
 Dataset Description:
@@ -53,10 +37,9 @@ This dataset is organized as follows:
    - Shock loading via piston method (NVE ensemble)
    - Real-time calculation of stress, temperature, and velocity profiles
 
-2. "Sample_Simulation_Data" directory contains:
+2. "Partial Data" directory contains:
    - Thermodynamic output files (run.out, run.${stemperature}K.out)
    - Spatial profile data (density, temperature, pressure, velocity)
-   - Atomic trajectory files (dump_*.xyz, dumpschock_*.xyz)
 
 3. "Model_and_Parameters" directory contains:
    - Initial atomic structure file (NiTi_Ni5cengNiTi.lmp)
@@ -73,5 +56,3 @@ This dataset is organized as follows:
    - Per-atom stress and energy calculations
    - Spatial binning for property profiling along shock direction
    - Velocity and temperature distribution analysis
-
-Note: Large output files (>100MB) are recommended to be stored separately and accessed via provided file manifest.
