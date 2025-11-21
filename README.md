@@ -1,38 +1,51 @@
 # NiTi-Ni-multilayer-film-impact
 Ni-NiTi Multilayer Thin Film Shock Simulation - LAMMPS MD. Investigates shock-induced behavior and phase transformations at atomic scale. Includes complete simulation scripts and analysis tools for impact dynamics research.
 
-## 概述
 
-核心模拟使用LAMMPS进行。主输入脚本配置了模型、原子间势函数、积分参数和分析例程。
+## Overview
 
-## 文件与目录
+The core simulation is performed using LAMMPS, a widely-used open-source molecular dynamics package. The main input script configures the model, interatomic potential, integration parameters, and analysis routines.
 
-- **`in.NiTitongjv`**: 主要的LAMMPS输入脚本。此文件定义了完整的模拟工作流程，包括：
-  - 模型初始化和能量最小化。
-  - 热力学平衡（NPT系综）。
-  - 通过活塞方法进行冲击加载（NVE系综）。
-  - 应力和温度等物性的在线计算与空间分布输出。
+## Files and Directories
 
-- **`Partial computational data`**: 此目录包含运行主脚本后获得的部分计算结果。它旨在用于验证和初步分析。内容包括：
-  - `run.out`: 热力学输出。
-  - `temp.profile`, `pressure.profile`: 温度和压力的空间分布文件。
+- **`in.NiTitongjv`**: The primary LAMMPS input script. This file defines the entire simulation workflow, including:
+  - Model initialization and energy minimization.
+  - Thermal equilibration (NPT ensemble).
+  - Shock loading via a piston method (NVE ensemble).
+  - On-the-fly calculation of properties like stress, temperature, and velocity profiles.
 
+- **`/Sample Simulation Data`**: This directory contains a subset of the computational results obtained by running the main script. It is intended for validation and preliminary analysis. Contents may include:
+  - `run.out`: Thermodynamic output.
+  - `temp.profile`, `pressure.profile`: Spatial profiles of temperature and pressure.
+  - `dumpschock_*.xyz`: Atomic trajectory files for visualization.
 
-- **`Models and Parameters`**: 此目录存放定义模拟系统的基本输入文件。
-  - `NiTi_Ni5cengNiTi.lmp`: 初始模型文件。
-  - `library.meam` 与 `NiTi.meam`: 定义势函数文件。
+- **`/Model and Parameters`**: This directory holds the essential input files that define the simulated system.
+  - `NiTi_Ni5cengNiTi.lmp`: The initial atomic coordinates data file.
+  - `library.meam` & `NiTi.meam`: Files defining the Modified Embedded-Atom Method (MEAM) potential for Ni-Ti interactions.
 
-## 开始使用
+## Getting Started
 
-### 前提条件
-*   您的系统必须安装LAMMPS。可以在 [LAMMPS官网](https://www.lammps.org/) 找到预编译的二进制文件或源代码。
+### Prerequisites
+*   LAMMPS must be installed on your system. Pre-built binaries or source code can be found on the [LAMMPS website](https://www.lammps.org/).
 
-### 自定义模拟
-您可以通过编辑 `in.NiTitongjv` 文件轻松修改模拟参数。关键变量在脚本顶部定义：
-- `stemperature`: 系统初始温度 (K)。
-- `vpiston`: 活塞速度 (km/s)，控制冲击强度。
-- `time_eq` 与 `time_shock`: 平衡阶段与冲击阶段的模拟时长。
+### Running the Simulation
+1.  Clone this repository.
+2.  Navigate to the root directory in your terminal.
+3.  Execute the simulation with the command:
+    ```bash
+    lmp -in in.NiTitongjv
+    ```
 
-## 许可证
+### Customizing the Simulation
+You can easily modify the simulation parameters by editing the `in.NiTitongjv` file. Key variables are defined at the top of the script:
+- `stemperature`: Initial system temperature (K).
+- `vpiston`: Piston velocity (km/s), which controls the shock strength.
+- `time_eq` & `time_shock`: Duration of the equilibration and shock phases.
+
+## License
 MIT License
+
+## Contact
+For questions regarding the simulation setup, please contact [Your Email or ORCID].
+
 
