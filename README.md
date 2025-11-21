@@ -13,12 +13,12 @@ Ni-NiTi Multilayer Thin Film Shock Simulation - LAMMPS MD. Investigates shock-in
   - 通过活塞方法进行冲击加载（NVE系综）。
   - 应力和温度等物性的在线计算与空间分布输出。
 
-- **`/示例模拟数据`**: 此目录包含运行主脚本后获得的部分计算结果。它旨在用于验证和初步分析。内容可能包括：
+- **`/Partial computational data`**: 此目录包含运行主脚本后获得的部分计算结果。它旨在用于验证和初步分析。内容可能包括：
   - `run.out`: 热力学输出。
   - `temp.profile`, `pressure.profile`: 温度和压力的空间分布文件。
   - `dumpschock_*.xyz`: 用于可视化的原子轨迹文件。
 
-- **`/模型与参数`**: 此目录存放定义模拟系统的基本输入文件。
+- **`/Models and Parameters`**: 此目录存放定义模拟系统的基本输入文件。
   - `NiTi_Ni5cengNiTi.lmp`: 初始原子坐标数据文件。
   - `library.meam` 与 `NiTi.meam`: 定义Ni-Ti相互作用的修正嵌入原子法势函数文件。
 
